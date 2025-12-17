@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+
+
 // PotionRecipe 클래스: 재료 목록을 vector<string>으로 변경
 class PotionRecipe {
 public:
@@ -202,6 +204,32 @@ public:
 
 };
 
+void addRecipe(AlchemyWorkshop& myWorkshop);
+void addRecipe(AlchemyWorkshop& myWorkshop, PotionContainer& player) { addRecipe(myWorkshop); }
+
+void displayAllRecipes(AlchemyWorkshop& myWorkshop);
+void displayAllRecipes(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayAllRecipes(myWorkshop); }
+
+void searchRecipeByName(AlchemyWorkshop& myWorkshop);
+void searchRecipeByName(AlchemyWorkshop& myWorkshop, PotionContainer& player) { searchRecipeByName(myWorkshop); }
+
+void searchRecipeByIngredient(AlchemyWorkshop& myWorkshop);
+void searchRecipeByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player) { searchRecipeByIngredient(myWorkshop); }
+
+void exitWorkshop();
+void exitWorkshop(AlchemyWorkshop& myWorkshop, PotionContainer& player) { exitWorkshop(); }
+
+void displayAllStocks(AlchemyWorkshop& myWorkshop);
+void displayAllStocks(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayAllStocks(myWorkshop); }
+
+void dispensePotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
+
+void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
+
+void displayPlayerInventory(PotionContainer& player);
+void displayPlayerInventory(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayPlayerInventory(player); }
+
+
 
 enum class ECmd {
     BEGIN_OF_ENUM, ADD, PRINT_RECIPES, PRINT_STOCKS, PRINT_INVENTORY, SEARCH_NAME, SEARCH_INGREDIENT, DISPENSE, RETURN, EXIT, END_OF_ENUM
@@ -224,19 +252,24 @@ constexpr std::array<const char*, ECmd_SIZE> ECmd_to_Explain_Init() {
 
 constexpr std::array<const char*, ECmd_SIZE> ECmd_to_Explain = ECmd_to_Explain_Init();
 
+constexpr std::array<void(*)(AlchemyWorkshop&, PotionContainer&), ECmd_SIZE> ECmd_to_Func_Init() {
+    std::array<void(*)(AlchemyWorkshop&, PotionContainer&), ECmd_SIZE> arr = {};
+    arr[(int)ECmd::ADD] = addRecipe;// "레시피 추가";
+    arr[(int)ECmd::PRINT_RECIPES] = displayAllRecipes;
+    arr[(int)ECmd::PRINT_STOCKS] = displayAllStocks;
+    arr[(int)ECmd::PRINT_INVENTORY] = displayPlayerInventory;
+    arr[(int)ECmd::DISPENSE] = dispensePotion;
+    arr[(int)ECmd::RETURN] = returnPotion;
+    arr[(int)ECmd::EXIT] = exitWorkshop;
+    arr[(int)ECmd::SEARCH_NAME] = searchRecipeByName;
+    arr[(int)ECmd::SEARCH_INGREDIENT] = searchRecipeByIngredient;
+    return arr;
 
-void addRecipe(AlchemyWorkshop& myWorkshop);
-void displayAllRecipes(AlchemyWorkshop& myWorkshop);
+}
 
-void searchRecipeByName(AlchemyWorkshop& myWorkshop);
+constexpr std::array<void(*)(AlchemyWorkshop&, PotionContainer&), ECmd_SIZE>  ECmd_to_Func = ECmd_to_Func_Init();
 
-void searchRecipeByIngredient(AlchemyWorkshop& myWorkshop);
 
-void exitWorkshop(AlchemyWorkshop& myWorkshop);
-
-void dispensePotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
-
-void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 int main() {
     AlchemyWorkshop myWorkshop;
@@ -258,44 +291,27 @@ int main() {
             std::cin.ignore(10000, '\n');
             continue;
         }
-        
-        switch ((ECmd)choice)
-        {
-        case ECmd::ADD:
-            addRecipe(myWorkshop);
-            break;
-        case ECmd::PRINT_RECIPES:
-            displayAllRecipes(myWorkshop);
-            break;
-        case ECmd::PRINT_STOCKS:
-            myWorkshop.displayAllStock();
-            break;
-        case ECmd::DISPENSE:
-            dispensePotion(myWorkshop, player);
-            break;
-        case ECmd::RETURN:
-            returnPotion(myWorkshop, player);
-            break;
-        case ECmd::PRINT_INVENTORY:
-            player.displayPotions();
-            break;
-        case ECmd::EXIT:
-            exitWorkshop(myWorkshop);
-            break;
-        case ECmd::SEARCH_NAME:
-            searchRecipeByName(myWorkshop);
-            break;
-        case ECmd::SEARCH_INGREDIENT:
-            searchRecipeByIngredient(myWorkshop);
-            break;
-        default:
+        ECmd cmd = (ECmd)choice;
+        if (cmd <= ECmd::BEGIN_OF_ENUM || cmd >= ECmd::END_OF_ENUM) {
             std::cout << "잘못된 선택입니다. 다시 시도하세요." << std::endl;
-            break;
+            continue;
         }
-
+        if (auto fp = ECmd_to_Func[choice])
+            fp(myWorkshop, player);
+        else {
+            std::cout << "ECmd_to_Func 초기화 오류" << std::endl;
+        }
     }
 
     return 0;
+}
+
+void displayAllStocks(AlchemyWorkshop& myWorkshop) {
+    myWorkshop.displayAllStock();
+}
+
+void displayPlayerInventory(PotionContainer& player) {
+    player.displayPotions();
 }
 
 void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
@@ -306,7 +322,7 @@ void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
     myWorkshop.returnPotion(name, player);
 }
 
-void dispensePotion( AlchemyWorkshop& myWorkshop, PotionContainer& player) {
+void dispensePotion(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
     std::string name;
     std::cout << "포션 이름: ";
     std::cin.ignore(10000, '\n');
@@ -314,7 +330,7 @@ void dispensePotion( AlchemyWorkshop& myWorkshop, PotionContainer& player) {
     bool ret = myWorkshop.dispensePotion(name, player);
 }
 
-void exitWorkshop(AlchemyWorkshop& myWorkshop) {
+void exitWorkshop() {
     std::cout << "공방 문을 닫습니다..." << std::endl;
     exit(0);
 }
@@ -350,15 +366,9 @@ void searchRecipeByName(AlchemyWorkshop& myWorkshop) {
     ret->displayRecipe();
 }
 
-
-
-
 void displayAllRecipes(AlchemyWorkshop& myWorkshop) {
-
     myWorkshop.displayAllRecipes();
 }
-
-
 
 void addRecipe(AlchemyWorkshop& myWorkshop) {
     std::string name;
@@ -381,7 +391,6 @@ void addRecipe(AlchemyWorkshop& myWorkshop) {
         }
         ingredients_input.push_back(ingredient);
     }
-
     // 입력받은 재료가 하나 이상 있을 때만 레시피 추가
     if (!ingredients_input.empty()) {
         myWorkshop.addRecipe(name, ingredients_input);
