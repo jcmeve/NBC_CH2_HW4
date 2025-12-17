@@ -3,7 +3,8 @@
 #include <array>
 #include <string>
 #include <map>
-
+#include <algorithm>
+#include <set>
 
 
 // PotionRecipe 클래스: 재료 목록을 vector<string>으로 변경
@@ -34,11 +35,23 @@ public:
 
 class RecipeManager {
 private:
-    std::vector<PotionRecipe> recipes;
-
+    std::map<std::string, PotionRecipe> recipes;
+    std::map<std::string, std::vector<PotionRecipe*>> indeces;
 public:
     void addRecipe(const std::string& name, const std::vector<std::string>& ingredients) {
-        recipes.push_back(PotionRecipe(name, ingredients));
+        if (recipes.find(name) != recipes.end()) {
+            std::cout << "이미 습득한 레시피입니다." << std::endl;
+            return;
+        }
+
+        auto res = recipes.emplace(name,PotionRecipe(name, ingredients));
+        PotionRecipe* ptr = &res.first->second;
+        std::set<std::string> unique_ingredients(ingredients.begin(), ingredients.end());
+        for (std::string ingredient : unique_ingredients) {
+            indeces[ingredient].push_back(ptr);
+        }
+        //TODO 모든 재료가 같은 레시피가 존재하면 안됨
+
         std::cout << ">> 새로운 레시피 '" << name << "'이(가) 추가되었습니다." << std::endl;
     }
 
@@ -49,33 +62,36 @@ public:
         }
 
         std::cout << "\n--- [ 전체 레시피 목록 ] ---" << std::endl;
-        for (size_t i = 0; i < recipes.size(); ++i) {
-            recipes[i].displayRecipe();
+        for (const auto &pair : recipes) {
+            pair.second.displayRecipe();
         }
         std::cout << "---------------------------\n";
     }
 
-    PotionRecipe* searchRecipeByName(const std::string& name) {
-        for (PotionRecipe& recipe : recipes) {
-            if (recipe.potionName == name) {
-                return &recipe;
-            }
+    const PotionRecipe* searchRecipeByName(const std::string& name) const {
+        auto iter = recipes.find(name);
+        if (iter == recipes.end()) {
+            return nullptr;
         }
-        return nullptr;
+        return &iter->second;
+    }    
+
+    const std::vector<const PotionRecipe*> searchRecipeByIngredient(const std::string& name) const {
+        auto iter = indeces.find(name);
+        if (iter == indeces.end()) {
+            return {};
+        }
+        return std::vector<const PotionRecipe*>(iter->second.begin(), iter->second.end());
+
     }
 
-    std::vector<PotionRecipe*> searchRecipeByIngredient(const std::string& name) {
-        std::vector<PotionRecipe*> ret;
-        for (PotionRecipe& recipe : recipes) {
-            for (const std::string& ingredient : recipe.ingredients) {
-                if (ingredient == name)
-                    ret.push_back(&recipe);
-            }
+    const std::vector<const PotionRecipe*> getAllRecipes() const {
+        std::vector<const PotionRecipe*> ret;
+        ret.reserve(recipes.size());
+        for (auto& pair : recipes) {
+            ret.push_back(&pair.second);
         }
         return ret;
-    }
-    const std::vector<PotionRecipe>& getAllRecipes() {
-        return recipes;
     }
 
 };
@@ -169,15 +185,15 @@ public:
         recipeManager.displayAllRecipes();
     }
 
-    PotionRecipe* searchRecipeByName(const std::string& name) {
+    const PotionRecipe* searchRecipeByName(const std::string& name)const {
         return recipeManager.searchRecipeByName(name);
     }
 
-    std::vector<PotionRecipe*> searchRecipeByIngredient(const std::string& name) {
+    const std::vector<const PotionRecipe*> searchRecipeByIngredient(const std::string& name)const {
         return recipeManager.searchRecipeByIngredient(name);
     }
 
-    const std::vector<PotionRecipe>& getAllRecipes() {
+    const std::vector<const PotionRecipe*> getAllRecipes() const{
         return recipeManager.getAllRecipes();
     }
 
@@ -341,7 +357,7 @@ void searchRecipeByIngredient(AlchemyWorkshop& myWorkshop) {
     std::cin.ignore(10000, '\n');
     std::getline(std::cin, name);
 
-    std::vector<PotionRecipe*> ret = myWorkshop.searchRecipeByIngredient(name);
+    std::vector<const PotionRecipe*> ret = myWorkshop.searchRecipeByIngredient(name);
     if (ret.empty()) {
         std::cout << "일치하는 레시피를 찾지 못했습니다." << std::endl;
         return;
@@ -353,12 +369,11 @@ void searchRecipeByIngredient(AlchemyWorkshop& myWorkshop) {
 
 void searchRecipeByName(AlchemyWorkshop& myWorkshop) {
     std::string name;
-    PotionRecipe* ret;
     std::cout << "물약 이름: ";
     std::cin.ignore(10000, '\n');
     std::getline(std::cin, name);
 
-    ret = myWorkshop.searchRecipeByName(name);
+    const PotionRecipe* ret = myWorkshop.searchRecipeByName(name);
     if (ret == nullptr) {
         std::cout << "일치하는 레시피를 찾지 못했습니다." << std::endl;
         return;
