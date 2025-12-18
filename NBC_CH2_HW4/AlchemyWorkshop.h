@@ -23,6 +23,8 @@ public:
 
     bool dispensePotionByName(const std::string& potionName, PotionContainer& container);
     bool dispensePotionByIngredient(const std::string& name, PotionContainer& container);
+    bool makePotionByIngredient(const std::vector<std::string>& ingredients);
+
     void returnPotion(std::string& potionName, PotionContainer& container);
     int getStock(const std::string& potionName)const;
 

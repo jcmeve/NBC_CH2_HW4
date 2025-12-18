@@ -35,6 +35,33 @@ void dispensePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& pl
     myWorkshop.dispensePotionByIngredient(name, player);
 }
 
+void makePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
+    // 여러 재료를 입력받기 위한 로직
+    std::vector<std::string> ingredients_input;
+    std::string ingredient;
+    std::cout << "사용할 재료들을 입력하세요. (입력 완료 시 '끝' 입력)" << std::endl;
+    std::cin.ignore(10000, '\n');
+    while (true) {
+        std::cout << "재료 입력: ";
+        std::getline(std::cin, ingredient);
+
+        // 사용자가 '끝'을 입력하면 재료 입력 종료
+        if (ingredient == "끝") {
+            break;
+        }
+        ingredients_input.push_back(ingredient);
+    }
+    // 입력받은 재료가 하나 이상 있을 때만 조합 시도
+    if (!ingredients_input.empty()) {
+        myWorkshop.makePotionByIngredient(ingredients_input);
+    }
+    else {
+        std::cout << ">> 재료가 입력되지 않아 포션 제조를 취소합니다." << std::endl;
+    }
+
+
+}
+
 
 void exitWorkshop() {
     std::cout << "공방 문을 닫습니다..." << std::endl;
@@ -107,7 +134,6 @@ void addRecipe(AlchemyWorkshop& myWorkshop) {
 
 
 void displayPlayerInventory(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayPlayerInventory(player); }
-
 
 void displayAllStocks(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayAllStocks(myWorkshop); }
 

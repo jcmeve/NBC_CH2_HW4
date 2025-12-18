@@ -30,13 +30,16 @@ void displayAllStocks(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 void dispensePotionByName(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
+void dispensePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player);
+
 void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 void displayPlayerInventory(AlchemyWorkshop& myWorkshop, PotionContainer& player);
-void dispensePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player);
+
+void makePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 enum class ECmd {
-    BEGIN_OF_ENUM, ADD, PRINT_RECIPES, PRINT_STOCKS, PRINT_INVENTORY, SEARCH_NAME, SEARCH_INGREDIENT, DISPENSE_NAME, DISPENSE_INGREDIENT, RETURN, EXIT, END_OF_ENUM
+    BEGIN_OF_ENUM, ADD, PRINT_RECIPES, PRINT_STOCKS, PRINT_INVENTORY, SEARCH_NAME, SEARCH_INGREDIENT, DISPENSE_NAME, DISPENSE_INGREDIENT, RETURN, MAKE_POTION, EXIT, END_OF_ENUM
 };
 constexpr int ECmd_SIZE = static_cast<int>(ECmd::END_OF_ENUM);
 
@@ -50,6 +53,7 @@ constexpr std::array<const char*, ECmd_SIZE> ECmd_to_Explain_Init() {
     arr[(int)ECmd::DISPENSE_NAME] = "포션 이름으로 검색해 지급받기";
     arr[(int)ECmd::DISPENSE_INGREDIENT] = "재료로 검색해 지급받기";
     arr[(int)ECmd::RETURN] = "포션 반환하기";
+    arr[(int)ECmd::MAKE_POTION] = "포션 제조하기";
     arr[(int)ECmd::EXIT] = "종료";
     arr[(int)ECmd::SEARCH_NAME] = "이름으로 검색";
     arr[(int)ECmd::SEARCH_INGREDIENT] = "재료로 검색";
@@ -64,6 +68,7 @@ constexpr std::array<void(*)(AlchemyWorkshop&, PotionContainer&), ECmd_SIZE> ECm
     arr[(int)ECmd::DISPENSE_NAME] = dispensePotionByName;
     arr[(int)ECmd::DISPENSE_INGREDIENT] = dispensePotionByIngredient;
     arr[(int)ECmd::RETURN] = returnPotion;
+    arr[(int)ECmd::MAKE_POTION] = makePotionByIngredient;
     arr[(int)ECmd::EXIT] = exitWorkshop;
     arr[(int)ECmd::SEARCH_NAME] = searchRecipeByName;
     arr[(int)ECmd::SEARCH_INGREDIENT] = searchRecipeByIngredient;
