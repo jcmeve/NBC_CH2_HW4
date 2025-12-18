@@ -7,7 +7,7 @@ private:
     std::map<std::string, PotionRecipe> recipes;
     std::map<std::string, std::vector<PotionRecipe*>> indeces;
 public:
-    void addRecipe(const std::string& name, const std::vector<std::string>& ingredients);
+    bool addRecipe(const std::string& name, const std::vector<std::string>& ingredients);
 
     void displayAllRecipes() const;
 

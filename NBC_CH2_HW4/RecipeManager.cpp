@@ -1,21 +1,44 @@
 ﻿#include "RecipeManager.h"
 #include <iostream>
 #include <set>
-void RecipeManager::addRecipe(const std::string& name, const std::vector<std::string>& ingredients) {
+bool RecipeManager::addRecipe(const std::string& name, const std::vector<std::string>& ingredients) {
     if (recipes.find(name) != recipes.end()) {
         std::cout << "이미 습득한 레시피입니다." << std::endl;
-        return;
+        return false;
     }
+
+    std::set<std::string> unique_ingredients(ingredients.begin(), ingredients.end());
+    if (ingredients.size() != unique_ingredients.size()) {
+        std::cout << "중복된 재료를 포함하는 레시피는 허용되지 않습니다." << std::endl;
+        return false;
+    }
+
+    //result of recipe is unique
+    std::map<std::string, int> counter;
+    for (auto ingredient : ingredients) {
+        for (const PotionRecipe* recipe : searchRecipeByIngredient(ingredient)) {
+            ++counter[recipe->potionName];
+        }
+    }
+    for (auto& pair : counter) {//조합식의 결과물은 유일하다고 가정
+        if (pair.second == ingredients.size()
+            && searchRecipeByName(pair.first)->ingredients.size() == ingredients.size()) {
+            std::cout << "완전히 동일한 재료를 요구하는 레시피가 있어 레시피 추가를 취소합니다.";
+            return false;
+        }
+    }
+
+
 
     auto res = recipes.emplace(name, PotionRecipe(name, ingredients));
     PotionRecipe* ptr = &res.first->second;
-    std::set<std::string> unique_ingredients(ingredients.begin(), ingredients.end());
+
     for (std::string ingredient : unique_ingredients) {
         indeces[ingredient].push_back(ptr);
     }
-    //TODO 모든 재료가 같은 레시피가 존재하면 안됨
 
     std::cout << ">> 새로운 레시피 '" << name << "'이(가) 추가되었습니다." << std::endl;
+    return true;
 }
 
 void RecipeManager::displayAllRecipes() const {
