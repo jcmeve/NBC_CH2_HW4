@@ -27,12 +27,22 @@ void AlchemyWorkshop::displayAllStock() const {
     stockManager.displayPotions();
 }
 
-bool AlchemyWorkshop::dispensePotion(std::string& potionName, PotionContainer& container) {
+bool AlchemyWorkshop::dispensePotionByName(const std::string& potionName, PotionContainer& container) {
     bool ret = stockManager.popPotion(potionName);
     if (ret) {
         container.pushPotion(potionName);
     }
     return ret;
+}
+
+bool AlchemyWorkshop::dispensePotionByIngredient(const std::string& name, PotionContainer& container) {
+    
+    const std::vector<const PotionRecipe*> ret = recipeManager.searchRecipeByIngredient(name);
+    if (ret.empty()) return false;
+    for (const PotionRecipe* recipe : ret) {
+        dispensePotionByName(recipe->potionName, container);
+    }
+    return true;
 }
 
 void AlchemyWorkshop::returnPotion(std::string& potionName, PotionContainer& container) {

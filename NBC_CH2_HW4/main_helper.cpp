@@ -19,13 +19,22 @@ void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
     myWorkshop.returnPotion(name, player);
 }
 
-void dispensePotion(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
+void dispensePotionByName(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
     std::string name;
     std::cout << "포션 이름: ";
     std::cin.ignore(10000, '\n');
     std::getline(std::cin, name);
-    bool ret = myWorkshop.dispensePotion(name, player);
+    myWorkshop.dispensePotionByName(name, player);
 }
+
+void dispensePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player) {
+    std::string name;
+    std::cout << "재료 이름: ";
+    std::cin.ignore(10000, '\n');
+    std::getline(std::cin, name);
+    myWorkshop.dispensePotionByIngredient(name, player);
+}
+
 
 void exitWorkshop() {
     std::cout << "공방 문을 닫습니다..." << std::endl;
@@ -98,6 +107,7 @@ void addRecipe(AlchemyWorkshop& myWorkshop) {
 
 
 void displayPlayerInventory(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayPlayerInventory(player); }
+
 
 void displayAllStocks(AlchemyWorkshop& myWorkshop, PotionContainer& player) { displayAllStocks(myWorkshop); }
 

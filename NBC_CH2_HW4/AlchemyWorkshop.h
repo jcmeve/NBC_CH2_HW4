@@ -21,7 +21,8 @@ public:
 
     void displayAllStock() const;
 
-    bool dispensePotion(std::string& potionName, PotionContainer& container);
+    bool dispensePotionByName(const std::string& potionName, PotionContainer& container);
+    bool dispensePotionByIngredient(const std::string& name, PotionContainer& container);
     void returnPotion(std::string& potionName, PotionContainer& container);
     int getStock(const std::string& potionName)const;
 

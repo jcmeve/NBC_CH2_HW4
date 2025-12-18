@@ -28,15 +28,15 @@ void exitWorkshop(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 void displayAllStocks(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
-void dispensePotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
+void dispensePotionByName(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 void returnPotion(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 void displayPlayerInventory(AlchemyWorkshop& myWorkshop, PotionContainer& player);
-
+void dispensePotionByIngredient(AlchemyWorkshop& myWorkshop, PotionContainer& player);
 
 enum class ECmd {
-    BEGIN_OF_ENUM, ADD, PRINT_RECIPES, PRINT_STOCKS, PRINT_INVENTORY, SEARCH_NAME, SEARCH_INGREDIENT, DISPENSE, RETURN, EXIT, END_OF_ENUM
+    BEGIN_OF_ENUM, ADD, PRINT_RECIPES, PRINT_STOCKS, PRINT_INVENTORY, SEARCH_NAME, SEARCH_INGREDIENT, DISPENSE_NAME, DISPENSE_INGREDIENT, RETURN, EXIT, END_OF_ENUM
 };
 constexpr int ECmd_SIZE = static_cast<int>(ECmd::END_OF_ENUM);
 
@@ -47,7 +47,8 @@ constexpr std::array<const char*, ECmd_SIZE> ECmd_to_Explain_Init() {
     arr[(int)ECmd::PRINT_RECIPES] = "모든 레시피 출력";
     arr[(int)ECmd::PRINT_STOCKS] = "모든 재고 출력";
     arr[(int)ECmd::PRINT_INVENTORY] = "플레이어 포션 출력";
-    arr[(int)ECmd::DISPENSE] = "포션 지급받기";
+    arr[(int)ECmd::DISPENSE_NAME] = "포션 이름으로 검색해 지급받기";
+    arr[(int)ECmd::DISPENSE_INGREDIENT] = "재료로 검색해 지급받기";
     arr[(int)ECmd::RETURN] = "포션 반환하기";
     arr[(int)ECmd::EXIT] = "종료";
     arr[(int)ECmd::SEARCH_NAME] = "이름으로 검색";
@@ -56,11 +57,12 @@ constexpr std::array<const char*, ECmd_SIZE> ECmd_to_Explain_Init() {
 }
 constexpr std::array<void(*)(AlchemyWorkshop&, PotionContainer&), ECmd_SIZE> ECmd_to_Func_Init() {
     std::array<void(*)(AlchemyWorkshop&, PotionContainer&), ECmd_SIZE> arr = {};
-    arr[(int)ECmd::ADD] = addRecipe;// "레시피 추가";
+    arr[(int)ECmd::ADD] = addRecipe;
     arr[(int)ECmd::PRINT_RECIPES] = displayAllRecipes;
     arr[(int)ECmd::PRINT_STOCKS] = displayAllStocks;
     arr[(int)ECmd::PRINT_INVENTORY] = displayPlayerInventory;
-    arr[(int)ECmd::DISPENSE] = dispensePotion;
+    arr[(int)ECmd::DISPENSE_NAME] = dispensePotionByName;
+    arr[(int)ECmd::DISPENSE_INGREDIENT] = dispensePotionByIngredient;
     arr[(int)ECmd::RETURN] = returnPotion;
     arr[(int)ECmd::EXIT] = exitWorkshop;
     arr[(int)ECmd::SEARCH_NAME] = searchRecipeByName;
