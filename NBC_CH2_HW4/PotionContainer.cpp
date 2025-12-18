@@ -11,11 +11,12 @@ void PotionContainer::displayPotions() const {
 }
 
 void PotionContainer::initializeStock(const std::string& potionName) {
-    if (potionStock.find(potionName) != potionStock.end()) {
+    auto iter = potionStock.find(potionName);
+    if (iter != potionStock.end()) {
         std::cout << "이미 소지한 포션입니다." << std::endl;
         return;
     }
-    potionStock[potionName] = 0;
+    iter->second = 0;
 }
 
 bool PotionContainer::popPotion(const std::string& potionName) {
@@ -30,17 +31,19 @@ bool PotionContainer::popPotion(const std::string& potionName) {
 }
 
 void PotionContainer::pushPotion(const std::string& potionName) {
-    if (potionStock.find(potionName) == potionStock.end()) {
+    auto iter = potionStock.find(potionName);
+    if (iter == potionStock.end()) {
         potionStock[potionName] = 1;
         return;
     }
-    ++potionStock[potionName];
+    ++(iter->second);
 }
 
-int PotionContainer::getStock(const std::string& potionName) {
-    if (potionStock.find(potionName) == potionStock.end()) {
+int PotionContainer::getStock(const std::string& potionName) const {
+    auto iter = potionStock.find(potionName);
+    if (iter == potionStock.end()) {
         std::cout << "재고가 없는 포션입니다." << std::endl;
         return -1;
     }
-    return potionStock[potionName];
+    return iter->second;
 }

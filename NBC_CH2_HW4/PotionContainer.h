@@ -11,5 +11,5 @@ public:
 
     virtual void pushPotion(const std::string& potionName);
 
-    virtual int getStock(const std::string& potionName);
+    virtual int getStock(const std::string& potionName)const;
 };

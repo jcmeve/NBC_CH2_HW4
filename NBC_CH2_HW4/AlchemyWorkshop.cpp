@@ -42,6 +42,6 @@ void AlchemyWorkshop::returnPotion(std::string& potionName, PotionContainer& con
     }
 }
 
-int AlchemyWorkshop::getStock(std::string& potionName) {
+int AlchemyWorkshop::getStock(const std::string& potionName) const{
     return stockManager.getStock(potionName);
 }

@@ -23,6 +23,6 @@ public:
 
     bool dispensePotion(std::string& potionName, PotionContainer& container);
     void returnPotion(std::string& potionName, PotionContainer& container);
-    int getStock(std::string& potionName);
+    int getStock(const std::string& potionName)const;
 
 };
