@@ -127,7 +127,7 @@
   <ItemGroup>
     <ClCompile Include="AlchemyWorkshop.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_helper.cpp" />
+    <ClCompile Include="Commands.cpp" />
     <ClCompile Include="PotionContainer.cpp" />
     <ClCompile Include="PotionRecipe.cpp" />
     <ClCompile Include="RecipeManager.cpp" />
@@ -135,7 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlchemyWorkshop.h" />
-    <ClInclude Include="main_helper.h" />
+    <ClInclude Include="Commands.h" />
     <ClInclude Include="PotionContainer.h" />
     <ClInclude Include="PotionRecipe.h" />
     <ClInclude Include="RecipeManager.h" />
